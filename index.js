@@ -4,6 +4,9 @@ const { Pool } = require('pg');
 const app = express();
 const port = 8080;
 
+// Middleware to parse JSON bodies
+app.use(express.json());
+
 // Configure Postgres connection
 const pool = new Pool({
   host: process.env.POSTGRES_HOST,
@@ -13,7 +16,7 @@ const pool = new Pool({
   port: 5432,
 });
 
-// Basic route: list messages
+// Route to get messages
 app.get('/', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
@@ -21,6 +24,26 @@ app.get('/', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Error querying database');
+  }
+});
+
+// í´§ NEW: Route to post a message
+app.post('/messages', async (req, res) => {
+  const { author, content } = req.body;
+
+  if (!author || !content) {
+    return res.status(400).json({ error: 'Author and content are required' });
+  }
+
+  try {
+    const result = await pool.query(
+      'INSERT INTO messages (author, content, created_at) VALUES ($1, $2, NOW()) RETURNING *',
+      [author, content]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error inserting message');
   }
 });
 
