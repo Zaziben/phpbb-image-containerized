@@ -20,14 +20,10 @@ const pool = new Pool({
 });
 
 // Route to get messages
-app.get('/', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error querying database');
-  }
+const path = require('path');
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // í´§ NEW: Route to post a message
