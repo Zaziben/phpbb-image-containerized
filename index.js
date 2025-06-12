@@ -32,15 +32,15 @@ app.get('/', async (req, res) => {
 
 // í´§ NEW: Route to post a message
 app.post('/messages', async (req, res) => {
-  const { author, content } = req.body;
+  const { author, message } = req.body;
 
-  if (!author || !content) {
-    return res.status(400).json({ error: 'Author and content are required' });
+  if (!author || !message) {
+    return res.status(400).json({ error: 'Author and message are required' });
   }
 
   try {
     const result = await pool.query(
-      'INSERT INTO messages (author, content, created_at) VALUES ($1, $2, NOW()) RETURNING *',
+      'INSERT INTO messages (author, message, created_at) VALUES ($1, $2, NOW()) RETURNING *',
       [author, content]
     );
     res.status(201).json(result.rows[0]);
