@@ -41,7 +41,7 @@ app.post('/messages', async (req, res) => {
   try {
     const result = await pool.query(
       'INSERT INTO messages (author, message, created_at) VALUES ($1, $2, NOW()) RETURNING *',
-      [author, content]
+      [author, message]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
