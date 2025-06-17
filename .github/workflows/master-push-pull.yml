@@ -2,9 +2,7 @@ name: Build and Push to Docker Hub and ECR
 
 on:
   push:
-    branches: 
-    - master
-    - master1
+    branches: [ master ]
 
 env: 
   AWS_REGION: ${{ secrets.AWS_REGION }}
