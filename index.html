@@ -1,12 +1,28 @@
 <!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>The Sparkling Ponies Ride At Midnight!</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2em; background: #f4f4f4; }
+    #messages { margin-bottom: 2em; }
+    .message { background: white; padding: 1em; border-radius: 5px; margin-bottom: 1em; }
+    form { display: flex; flex-direction: column; gap: 0.5em; max-width: 400px; }
+  </style>
 </head>
 <body>
   <h1>Welcome to the D&D Forum!</h1>
-  <p>This is the landing page. More to come!</p>
+
+  <div id="messages"></div>
+
+  <form id="message-form">
+    <input type="text" id="author" placeholder="Your name" required>
+    <textarea id="message" placeholder="Write your message..." required></textarea>
+    <button type="submit">Send</button>
+  </form>
+
+  <script src="script.js"></script>
 </body>
 </html>
 

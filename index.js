@@ -19,11 +19,17 @@ const pool = new Pool({
   },
 });
 
-// Route to get messages
-const path = require('path');
+app.use(express.static(__dirname));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+// Route to get messages
+app.get('/messages', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error querying database');
+  }
 });
 
 // í´§ NEW: Route to post a message
@@ -44,6 +50,10 @@ app.post('/messages', async (req, res) => {
     console.error(err);
     res.status(500).send('Error inserting message');
   }
+});
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(port, () => {
