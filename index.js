@@ -1,8 +1,3 @@
-// invitations encrypt
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret'; // store securely in prod
 //
 const express = require('express');
 const { Pool } = require('pg');
@@ -36,9 +31,12 @@ app.get('/messages', async (req, res) => {
   }
 });
 // invitations cont
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecret'; // store securely in prod
 const transporter = nodemailer.createTransport({
   host: 'smtp.example.com', // e.g., smtp.gmail.com
   port: 587,
@@ -46,6 +44,34 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
+  }
+});
+app.post('/admin/send-invite', async (req, res) => {
+  const { email } = req.body;
+
+  // TODO: check if admin is logged in
+
+  const code = crypto.randomBytes(20).toString('hex');
+  const inviteLink = `https://yourforum.com/register?code=${code}`;
+
+  try {
+    await pool.query(
+      'INSERT INTO invites (email, code) VALUES ($1, $2)',
+      [email, code]
+    );
+
+    await transporter.sendMail({
+      from: '"DND Forum" <your@email.com>',
+      to: email,
+      subject: 'You are invited to join the DND forum',
+      text: `Click the link to register: ${inviteLink}`,
+      html: `<p>Click <a href="${inviteLink}">here</a> to register.</p>`
+    });
+
+    res.status(200).json({ message: 'Invite sent' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to send invite');
   }
 });
 // registration route
