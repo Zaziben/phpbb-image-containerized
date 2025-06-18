@@ -1,9 +1,14 @@
+// invitations encrypt
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecret'; // store securely in prod
+//
 const express = require('express');
 const { Pool } = require('pg');
 
 const app = express();
 const port = 8080;
-
 // Middleware to parse JSON bodies
 app.use(express.json());
 
@@ -30,6 +35,93 @@ app.get('/messages', async (req, res) => {
     res.status(500).send('Error querying database');
   }
 });
+// invitations cont
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+
+const transporter = nodemailer.createTransport({
+  host: 'smtp.example.com', // e.g., smtp.gmail.com
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+// registration route
+app.post('/register', async (req, res) => {
+  const { username, password, inviteCode } = req.body;
+
+  if (!username || !password || !inviteCode) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  try {
+    // 1. Validate invite code
+    const inviteResult = await pool.query(
+      'SELECT * FROM invitations WHERE code = $1 AND used = false',
+      [inviteCode]
+    );
+    if (inviteResult.rows.length === 0) {
+      return res.status(403).json({ error: 'Invalid or already used invite code' });
+    }
+
+    // 2. Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 3. Insert user into the users table
+    const userResult = await pool.query(
+      'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id',
+      [username, hashedPassword]
+    );
+
+    const userId = userResult.rows[0].id;
+
+    // 4. Mark invite as used
+    await pool.query(
+      'UPDATE invitations SET used = true, used_by = $1 WHERE code = $2',
+      [userId, inviteCode]
+    );
+
+    // 5. (Optional) Send back a token or redirect to login
+    const token = jwt.sign({ userId }, JWT_SECRET, { expiresIn: '2h' });
+    res.json({ message: 'Registration successful', token });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+// login route
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password)
+    return res.status(400).json({ error: 'Username and password are required' });
+
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+    const user = result.rows[0];
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    if (!user.invited) {
+      return res.status(403).json({ error: 'User not invited' });
+    }
+
+    const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {
+      expiresIn: '1h'
+    });
+
+    res.json({ token });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
 
 // ��� NEW: Route to post a message
 app.post('/messages', async (req, res) => {
