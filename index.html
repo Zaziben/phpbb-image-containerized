@@ -1,28 +1,106 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
 <head>
   <meta charset="UTF-8">
   <title>The Sparkling Ponies Ride At Midnight!</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 2em; background: #f4f4f4; }
-    #messages { margin-bottom: 2em; }
-    .message { background: white; padding: 1em; border-radius: 5px; margin-bottom: 1em; }
-    form { display: flex; flex-direction: column; gap: 0.5em; max-width: 400px; }
-  </style>
 </head>
 <body>
-  <h1>Welcome to the D&D Forum!</h1>
+  <h1>DND Forum</h1>
 
-  <div id="messages"></div>
-
-  <form id="message-form">
-    <input type="text" id="author" placeholder="Your name" required>
-    <textarea id="message" placeholder="Write your message..." required></textarea>
-    <button type="submit">Send</button>
+  <!-- Thread Creation Form -->
+  <h2>Create a Thread</h2>
+  <form id="thread-form">
+    <input type="text" id="thread-title" placeholder="Thread Title" required />
+    <input type="text" id="thread-author" placeholder="Your Name" required />
+    <textarea id="thread-message" placeholder="First Message" required></textarea>
+    <button type="submit">Create Thread</button>
   </form>
 
-  <script src="script.js"></script>
+  <!-- List of Threads -->
+  <h2>All Threads</h2>
+  <ul id="thread-list"></ul>
+
+  <!-- Single Thread View -->
+  <div id="thread-view" style="display:none;">
+    <h2 id="thread-title-view"></h2>
+    <ul id="message-list"></ul>
+
+    <h3>Post a Reply</h3>
+    <form id="reply-form">
+      <input type="text" id="reply-author" placeholder="Your Name" required />
+      <textarea id="reply-message" placeholder="Your message" required></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const threadList = document.getElementById('thread-list');
+    const threadView = document.getElementById('thread-view');
+    const threadTitleView = document.getElementById('thread-title-view');
+    const messageList = document.getElementById('message-list');
+    let currentThreadId = null;
+
+    async function fetchThreads() {
+      const res = await fetch('/threads');
+      const threads = await res.json();
+      threadList.innerHTML = '';
+      threads.forEach(thread => {
+        const li = document.createElement('li');
+        li.textContent = thread.title;
+        li.style.cursor = 'pointer';
+        li.onclick = () => loadThread(thread.id, thread.title);
+        threadList.appendChild(li);
+      });
+    }
+
+    async function loadThread(id, title) {
+      currentThreadId = id;
+      threadTitleView.textContent = title;
+      threadView.style.display = 'block';
+      const res = await fetch(`/threads/${id}`);
+      const data = await res.json();
+      messageList.innerHTML = '';
+      data.messages.forEach(msg => {
+        const li = document.createElement('li');
+        li.textContent = `${msg.author}: ${msg.message}`;
+        messageList.appendChild(li);
+      });
+    }
+
+    document.getElementById('thread-form').onsubmit = async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('thread-title').value;
+      const author = document.getElementById('thread-author').value;
+      const message = document.getElementById('thread-message').value;
+
+      const res = await fetch('/threads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, author, message })
+      });
+
+      if (res.ok) {
+        document.getElementById('thread-form').reset();
+        fetchThreads();
+      }
+    };
+
+    document.getElementById('reply-form').onsubmit = async (e) => {
+      e.preventDefault();
+      const author = document.getElementById('reply-author').value;
+      const message = document.getElementById('reply-message').value;
+
+      await fetch(`/threads/${currentThreadId}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ author, message })
+      });
+
+      document.getElementById('reply-form').reset();
+      loadThread(currentThreadId, threadTitleView.textContent);
+    };
+
+    fetchThreads();
+  </script>
 </body>
 </html>
-
