@@ -7,6 +7,27 @@ const port = 8080;
 // Middleware to parse JSON bodies
 app.use(express.json());
 
+// Middleware to verify JWT
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader?.split(' ')[1];
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+function requireAdmin(req, res, next) {
+  if (!req.user?.is_admin) {
+    return res.status(403).send('Access denied');
+  }
+  next();
+}
+  });
+}
+
+
 // Configure Postgres connection
 const pool = new Pool({
   host: process.env.POSTGRES_HOST,
@@ -20,6 +41,10 @@ const pool = new Pool({
 });
 
 app.use(express.static(__dirname));
+
+app.get('/messages', authenticateToken, async (req, res) => {
+  // ...
+});
 
 app.get('/messages', async (req, res) => {
   try {
@@ -74,6 +99,7 @@ app.post('/admin/send-invite', async (req, res) => {
     res.status(500).send('Failed to send invite');
   }
 });
+
 // registration route
 app.post('/register', async (req, res) => {
   const { username, password, inviteCode } = req.body;
@@ -148,6 +174,17 @@ app.post('/login', async (req, res) => {
   }
 });
 
+const token = localStorage.getItem('token');
+if (!token) {
+  window.location.href = '/login';
+}
+
+fetch('/threads', {
+  headers: {
+    'Authorization': `Bearer ${token}`
+  }
+});
+
 
 // ��� NEW: Route to post a message
 app.post('/messages', async (req, res) => {
@@ -169,7 +206,9 @@ app.post('/messages', async (req, res) => {
   }
 });
 
-
+app.get('/threads', authenticateToken, async (req, res) => {
+  // ...
+});
 
 app.get('/threads', async (req, res) => {
   const result = await pool.query('SELECT * FROM threads ORDER BY created_at DESC');
@@ -230,5 +269,11 @@ app.get('/', (req, res) => {
 
 app.listen(port, () => {
   console.log(`DND Forum app listening on port ${port}`);
+});
+
+const path = require('path');
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
