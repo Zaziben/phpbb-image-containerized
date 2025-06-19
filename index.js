@@ -27,23 +27,32 @@ app.get('/login', (req, res) => {
 // Middleware to verify JWT
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
-  const token = authHeader?.split(' ')[1];
+  const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) return res.sendStatus(401);
 
-  jwt.verify(token, JWT_SECRET, (err, user) => {
+  jwt.verify(token, JWT_SECRET, async (err, user) => {
     if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-function requireAdmin(req, res, next) {
-  if (!req.user?.is_admin) {
-    return res.status(403).send('Access denied');
-  }
-  next();
-}
+
+    try {
+      const result = await pool.query('SELECT * FROM users WHERE username = $1', [user.username]);
+      const dbUser = result.rows[0];
+
+      if (!dbUser) return res.sendStatus(404);
+
+      // NEW: Only enforce `invited = true` for non-admins
+      if (!dbUser.is_admin && !dbUser.invited) {
+        return res.status(403).json({ error: 'Not invited' });
+      }
+
+      req.user = dbUser;
+      next();
+    } catch (err) {
+      console.error(err);
+      res.sendStatus(500);
+    }
   });
 }
-
 
 // Configure Postgres connection
 const pool = new Pool({
