@@ -174,18 +174,6 @@ app.post('/login', async (req, res) => {
   }
 });
 
-const token = localStorage.getItem('token');
-if (!token) {
-  window.location.href = '/login';
-}
-
-fetch('/threads', {
-  headers: {
-    'Authorization': `Bearer ${token}`
-  }
-});
-
-
 // ��� NEW: Route to post a message
 app.post('/messages', async (req, res) => {
   const { author, message } = req.body;
