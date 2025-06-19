@@ -172,12 +172,8 @@ app.post('/login', async (req, res) => {
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
     const user = result.rows[0];
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user || !(await bcrypt.compare(password, user.password_hash))) {
       return res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-    if (!user.invited) {
-      return res.status(403).json({ error: 'User not invited' });
     }
 
     const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {
