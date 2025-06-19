@@ -69,10 +69,6 @@ const pool = new Pool({
 app.use(express.static(__dirname));
 
 app.get('/messages', authenticateToken, async (req, res) => {
-  // ...
-});
-
-app.get('/messages', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
     res.json(result.rows);
@@ -217,10 +213,6 @@ app.post('/messages', async (req, res) => {
 });
 
 app.get('/threads', authenticateToken, async (req, res) => {
-  // ...
-});
-
-app.get('/threads', async (req, res) => {
   const result = await pool.query('SELECT * FROM threads ORDER BY created_at DESC');
   res.json(result.rows);
 });
