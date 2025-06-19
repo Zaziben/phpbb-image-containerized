@@ -212,25 +212,6 @@ app.post('/messages', async (req, res) => {
   }
 });
 
-//fetch threads?
-
-fetch('/threads', {
-  method: 'GET',
-  headers: {
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
-  }
-})
-  .then(res => res.json())
-  .then(data => {
-    const threadList = document.getElementById('thread-list');
-    data.forEach(thread => {
-      const li = document.createElement('li');
-      li.textContent = thread.title;
-      threadList.appendChild(li);
-    });
-  })
-  .catch(err => console.error('Failed to load threads:', err));
-
 app.get('/threads', authenticateToken, async (req, res) => {
   const result = await pool.query('SELECT * FROM threads ORDER BY created_at DESC');
   res.json(result.rows);
