@@ -1,11 +1,28 @@
 //
 const express = require('express');
 const { Pool } = require('pg');
-
+const path = require('path');
 const app = express();
 const port = 8080;
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+//paths for login and admin
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.listen(port, () => {
+  console.log(`DND Forum app listening on port ${port}`);
+});
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
+});
 
 // Middleware to verify JWT
 function authenticateToken(req, res, next) {
@@ -264,8 +281,6 @@ const path = require('path');
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
-
-const path = require('path');
 
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'login.html'));
