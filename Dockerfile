@@ -2,17 +2,18 @@
 FROM php:8.4-apache
 
 # Install required PHP extensions for phpBB
-RUN apt-get update && apt-get install -y \
-libpng-dev \
-libjpeg-dev \
-libfreetype6-dev \
-libzip-dev \
-libxml2-dev \
-libpq-dev \
-unzip \
-&& docker-php-ext-configure gd --with-freetype --with-jpeg \
-&& docker-php-ext-install gd pdo pdo_pgsql pgsql mbstring xml simplexml dom zip opcache zlib ftp
 
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    libxml2-dev \
+    libpq-dev \
+    unzip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_pgsql pgsql mbstring xml simplexml dom zip ftp \
+    && docker-php-ext-enable opcache
 # Enable Apache mods
 RUN a2enmod rewrite headers
 
