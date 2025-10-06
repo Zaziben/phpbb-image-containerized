@@ -3,15 +3,15 @@ FROM php:8.4-apache
 
 # Install required PHP extensions for phpBB
 RUN apt-get update && apt-get install -y \
-        libpng-dev \
-        libjpeg-dev \
-        libfreetype6-dev \
-        libzip-dev \
+	libpng-dev \
+	libjpeg-dev \
+	libfreetype6-dev \
+	libzip-dev \
 	libxml2-dev \
 	libpq-dev \
-        unzip \
-        && docker-php-ext-configure gd --with-freetype --with-jpeg \
-        && docker-php-ext-install -j$(nproc) gd mysqli pdo pdo_pgsql mbstring xml simplexml dom zip opcache zlib ftp
+	unzip \
+	&& docker-php-ext-configure gd --with-freetype --with-jpeg \
+	&& docker-php-ext-install -j$(nproc) gd mysqli pdo pdo_pgsql mbstring xml simplexml dom zip opcache zlib ftp
 
 # Enable Apache mods
 RUN a2enmod rewrite headers
