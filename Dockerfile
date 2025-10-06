@@ -11,7 +11,7 @@ libxml2-dev \
 libpq-dev \
 unzip \
 && docker-php-ext-configure gd --with-freetype --with-jpeg \
-&& docker-php-ext-install -j$(nproc) gd mysqli pdo pdo_pgsql mbstring xml simplexml dom zip opcache zlib ftp
+&& docker-php-ext-install gd pdo pdo_pgsql pgsql mbstring xml simplexml dom zip opcache zlib ftp
 
 # Enable Apache mods
 RUN a2enmod rewrite headers
