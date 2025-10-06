@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_pgsql pgsql mbstring xml simplexml dom zip ftp \
+    && docker-php-ext-install gd pdo pdo_pgsql pgsql mbstring xml zip ftp \
     && docker-php-ext-enable opcache
 # Enable Apache mods
 RUN a2enmod rewrite headers
