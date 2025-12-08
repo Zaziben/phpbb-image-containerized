@@ -18,6 +18,9 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache mods
 RUN a2enmod rewrite headers
 
+# install postgres
+RUN apt install postgresql postgresql-contrib -y
+
 # Download phpBB
 WORKDIR /var/www/html
 RUN curl -L https://download.phpbb.com/pub/release/3.3/3.3.15/phpBB-3.3.15.zip -o phpbb.zip \
@@ -27,6 +30,6 @@ RUN curl -L https://download.phpbb.com/pub/release/3.3/3.3.15/phpBB-3.3.15.zip -
 
 # Fix permissions
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+    && chmod -R 777 /var/www/html
 
 EXPOSE 80
