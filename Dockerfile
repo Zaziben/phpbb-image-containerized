@@ -41,7 +41,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 RUN mkdir -p ext/AustinMaddox \
  && git clone https://github.com/AustinMaddox/phpbb-extension-s3.git ext/AustinMaddox/s3 \
  && cd ext/AustinMaddox/s3 \
- && composer.phar install --no-interaction --prefer-dist
+ && composer install --no-interaction --prefer-dist
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html
