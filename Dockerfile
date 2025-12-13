@@ -42,7 +42,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
  && php -r "unlink('composer-setup.php');"
 
 # Clone the extension
-UN mkdir -p ext/AustinMaddox \
+RUN mkdir -p ext/AustinMaddox \
  && git clone https://github.com/AustinMaddox/phpbb-extension-s3.git ext/AustinMaddox/s3 \
  && cd ext/AustinMaddox/s3 \
  && composer install --no-dev --no-interaction --prefer-dist
