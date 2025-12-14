@@ -1,4 +1,4 @@
-# Use official PHP with Apache
+
 FROM php:8.4-apache
 
 # Install required PHP extensions for phpBB
@@ -18,8 +18,9 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache mods
 RUN a2enmod rewrite headers
 
-# install for debug purposes
-RUN apt install postgresql postgresql-contrib -y
+# Install for debug purposes
+RUN apt-get install postgresql postgresql-contrib -y
+RUN apt-get install vim -y
 
 # Download phpBB
 WORKDIR /var/www/html
@@ -41,7 +42,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 RUN mkdir -p ext/austinmaddox \
  && git clone --branch patch-1 https://github.com/Zaziben/phpbb-extension-s3.git ext/austinmaddox/s3 \
  && cd ext/austinmaddox/s3 \
- && composer install --no-interaction --prefer-dist --ignore-platform-reqs
+ && composer install --no-interaction --ignore-platform-reqs
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html
