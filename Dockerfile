@@ -1,7 +1,7 @@
 
 FROM php:8.4-apache
 
-# Install required PHP extensions for phpBB
+# Install required dependancies for phpBB
 
 RUN apt-get update && apt-get install -y \
     libpng-dev \
