@@ -32,7 +32,7 @@ RUN curl -L https://download.phpbb.com/pub/release/3.3/3.3.15/phpBB-3.3.15.zip -
 RUN apt-get update && \
     apt-get install -y git unzip && \
     apt-get clean
-
+# To rejigger
 WORKDIR /var/www/html/phpbb
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
