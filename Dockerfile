@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install gd pdo pdo_pgsql pgsql mbstring xml zip ftp \
     && docker-php-ext-enable opcache
 # Enable Apache mods
-B
+
 RUN a2enmod rewrite headers
 
 # Install for debug purposes
