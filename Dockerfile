@@ -41,9 +41,11 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
  && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
  && php -r "unlink('composer-setup.php');"
 
-RUN mkdir -p ext/austinmaddox \
- && git clone --branch patch-1 https://github.com/Zaziben/phpbb-extension-s3.git ext/austinmaddox/s3 \
- && cd ext/austinmaddox/s3 \
+WORKDIR /var/www/html/phpbb/ext
+
+RUN mkdir -p austinmaddox \
+ && git clone --branch patch-1 https://github.com/Zaziben/phpbb-extension-s3.git austinmaddox/s3 \
+ && cd austinmaddox/s3 \
  && composer install --no-interaction --ignore-platform-reqs
 
 RUN chown -R www-data:www-data /var/www/html \
