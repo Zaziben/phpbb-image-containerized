@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install gd pdo pdo_pgsql pgsql mbstring xml zip ftp \
     && docker-php-ext-enable opcache
 # Enable Apache mods
+B
 RUN a2enmod rewrite headers
 
 # Install for debug purposes
@@ -43,7 +44,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 RUN mkdir -p ext/austinmaddox \
  && git clone --branch patch-1 https://github.com/Zaziben/phpbb-extension-s3.git ext/austinmaddox/s3 \
  && cd ext/austinmaddox/s3 \
- && composer install --no-interaction --ignore-platform-reqs
+ && composer.phar install --dev
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html
