@@ -43,7 +43,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 
 WORKDIR /var/www/html/phpbb/ext
 
-RUN mkdir -p austinmaddox \
+RUN mkdir austinmaddox \
  && git clone --branch patch-1 https://github.com/Zaziben/phpbb-extension-s3.git austinmaddox/s3 \
  && cd austinmaddox/s3 \
  && composer install --no-interaction --ignore-platform-reqs
