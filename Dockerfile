@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache mods
 
 RUN a2enmod rewrite headers
-
+# test run 
 # Install for debug purposes
 RUN apt-get install postgresql postgresql-contrib -y
 RUN apt-get install vim -y
