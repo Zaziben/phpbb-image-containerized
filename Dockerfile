@@ -34,8 +34,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html
 
 # Install dependancies for mountpoint
-RUN apt-get update && apt-get install -y
-    unzip
+RUN apt-get update && apt-get install -y \
     ca-certificates \
     fuse \
     && rm -rf /var/lib/apt/lists/*
