@@ -48,10 +48,10 @@ RUN curl -Lo /usr/local/bin/mount-s3 \
 RUN mkdir -p /mnt/phpbb-s3
 
 # Entrypoint script
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["apache2-foreground"]
 
 
