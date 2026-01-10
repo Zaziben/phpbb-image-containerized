@@ -5,6 +5,7 @@ on:
     branches: 
     - master
     - master1
+    - mounts3
 
 env: 
   AWS_REGION: ${{ secrets.AWS_REGION }}
