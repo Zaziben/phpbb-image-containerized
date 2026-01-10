@@ -2,6 +2,8 @@
 set -e
 
 echo "Starting container entrypoint..."
+
+mkdir -p /mnt/phpbb-s3
 echo "Mounting S3 bucket with Mountpoint..."
 
 mount-s3 dnd-forum-s3-jv /mnt/phpbb-s3
