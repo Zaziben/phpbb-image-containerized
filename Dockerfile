@@ -29,13 +29,13 @@ RUN curl -L https://download.phpbb.com/pub/release/3.3/3.3.15/phpBB-3.3.15.zip -
     && rm -rf phpbb.zip phpBB3
 
 # Get mountpoint s3
-RUN wget https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3 -y
+RUN wget https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3 
 
 RUN sudo yum install ./mount-s3.rpm -y
 
 RUN wget https://s3.amazonaws.com/mountpoint-s3-release/public_keys/KEYS && \
     gpg --import KEYS \
-    gpg --fingerprint mountpoint-s3@amazon.com -y
+    gpg --fingerprint mountpoint-s3@amazon.com 
 
 RUN wget https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.rpm.asc && \
     gpg --verify https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.rpm.asc
