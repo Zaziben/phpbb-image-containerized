@@ -17,8 +17,8 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache mods
 RUN a2enmod rewrite headers
 
-# Install for debug purposes and wget
-RUN apt-get install postgresql postgresql-contrib vim wget -y
+# Install for debug purposes
+RUN apt-get install postgresql postgresql-contrib vim -y
 
 WORKDIR /var/www/html
 
@@ -28,22 +28,18 @@ RUN curl -L https://download.phpbb.com/pub/release/3.3/3.3.15/phpBB-3.3.15.zip -
     && mv phpBB3/* ./ \
     && rm -rf phpbb.zip phpBB3
 
-# Get mountpoint s3
-RUN wget https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3 -y
+# For s3 extension
+RUN apt-get update && \
+    apt-get install -y git unzip && \
+    apt-get clean
 
-RUN sudo yum install ./mount-s3.rpm -y
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+ && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+ && php -r "unlink('composer-setup.php');"
 
-RUN wget https://s3.amazonaws.com/mountpoint-s3-release/public_keys/KEYS && \
-    gpg --import KEYS \
-    gpg --fingerprint mountpoint-s3@amazon.com -y
-
-RUN wget https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.rpm.asc && \
-    gpg --verify https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.rpm.asc
-
-RUN mount-s3 dnd-forum-s3-jv /phpbb/files \
-    mount-s3 dnd-forum-s3-jv /phpbb/store \
-    mount-s3 dnd-forum-s3-jv /phpbb/images \
-
+RUN git clone --branch patch-1 https://github.com/Zaziben/phpbb-extension-s3.git ext/austinmaddox/s3 \
+ && cd ext/austinmaddox/s3 \
+ && composer install --no-interaction --ignore-platform-reqs
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html
