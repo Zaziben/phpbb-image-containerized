@@ -46,4 +46,7 @@ CMD ["apache2-foreground"]
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html
 
+# to enable board
+RUN mv install binstall
+
 EXPOSE 80

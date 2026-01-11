@@ -25,10 +25,10 @@ ln -s /mnt/phpbb-s3/avatars /var/www/html/images/avatars/upload
 
 echo "creating prefixes..."
 
-mkdir /mnt/phpbb-s3/files
-mkdir /mnt/phpbb-s3/store
-mkdir /mnt/phpbb-s3/avatars
 
+mkdir -p /mnt/phpbb-s3/files \
+         /mnt/phpbb-s3/store \
+         /mnt/phpbb-s3/avatars
 
 echo "Starting Apache..."
 exec "$@"
