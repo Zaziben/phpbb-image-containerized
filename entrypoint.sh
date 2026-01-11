@@ -23,6 +23,13 @@ ln -s /mnt/phpbb-s3/files   /var/www/html/files
 ln -s /mnt/phpbb-s3/store   /var/www/html/store
 ln -s /mnt/phpbb-s3/avatars /var/www/html/images/avatars/upload
 
+echo "creating prefixes..."
+
+mkdir /mnt/phpbb-s3/files
+mkdir /mnt/phpbb-s3/store
+mkdir /mnt/phpbb-s3/avatars
+
+
 echo "Starting Apache..."
 exec "$@"
 
