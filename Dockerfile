@@ -36,14 +36,14 @@ RUN curl -L https://download.phpbb.com/pub/release/3.3/3.3.15/phpBB-3.3.15.zip -
     && mv phpBB3/* ./ \
     && rm -rf phpbb.zip phpBB3
 
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 777 /var/www/html
-
 # Copy entrypoint
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["apache2-foreground"]
+
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 777 /var/www/html
 
 EXPOSE 80
