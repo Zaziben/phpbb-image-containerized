@@ -1,1 +1,1 @@
-An image for hosting phpbb server on a container with mountpoint s3 replacing 3 directories for media storage. 
+An image for hosting a phpbb server on a container with mountpoint s3 replacing directories for media storage. 
