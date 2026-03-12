@@ -22,6 +22,11 @@ RUN a2enmod rewrite headers
 # Install for debug purposes
 RUN apt-get install postgresql postgresql-contrib vim -y
 
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install \
+    && rm -rf awscliv2.zip aws
+
 WORKDIR /var/www/html
 
 # Download phpBB
