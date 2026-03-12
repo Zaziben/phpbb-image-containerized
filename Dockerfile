@@ -19,12 +19,6 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache mods
 RUN a2enmod rewrite headers
 
-# Install Mountpoint for S3 (official AWS build)
-RUN curl -Lo /tmp/mountpoint.deb \
-    https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.deb \
-    && apt-get install -y /tmp/mountpoint.deb \
-    && rm /tmp/mountpoint.deb
-
 # Install for debug purposes
 RUN apt-get install postgresql postgresql-contrib vim -y
 
